@@ -1,9 +1,11 @@
 package scout;
-import java.util.Random;
+import org.apache.commons.text.similarity.CosineDistance;
+
 public class NLPHelper {
 	
-	public static double computeSimilarityScore(String text1, String text2) {
-		Random rand = new Random();
-		return rand.nextDouble();
+	CosineDistance dist = new CosineDistance();
+	
+	public double cosineSimilarity(String s1, String s2) {
+		return this.dist.apply(s1,  s2);
 	}
 }

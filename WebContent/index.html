@@ -15,12 +15,26 @@
             <button type="button" onclick="closeSocket();" >Close</button>
         </div>
         <!-- Server responses get written here -->
+        <div id="nURLs"></div>
+        <div id="URLs">
+        	<div id="0"></div>
+        	<div id="1"></div>
+        	<div id="2"></div>
+        	<div id="3"></div>
+        	<div id="4"></div>
+        	<div id="5"></div>
+        	<div id="6"></div>
+        	<div id="7"></div>
+        	<div id="8"></div>
+        	<div id="9"></div>
+        </div>
         <div id="messages"></div>
        
         <!-- Script to utilise the WebSocket -->
         <script type="text/javascript">
                        
             var webSocket;
+            
             var messages = document.getElementById("messages");
            
            
@@ -47,7 +61,7 @@
                 };
  
                 webSocket.onmessage = function(event){
-                    writeResponse(event.data);
+                    writeURLInfo(event.data);
                 };
  
                 webSocket.onclose = function(event){
@@ -66,9 +80,25 @@
             function closeSocket(){
                 webSocket.close();
             }
+            
+            function writeResponse(message){
+
+                messages.innerHTML += "<br/>" + message;
+            }
  
-            function writeResponse(text){
-                messages.innerHTML += "<br/>" + text;
+            function writeURLInfo(JsonString){
+            	var messages = document.getElementById("messages");
+            	var json = JSON.parse(JsonString);
+            	
+				var nURLs = document.getElementById("nURLs");
+				nURLs.innerHTML = json["nURLsVisited"];
+				
+				for (var i = 0; i < 10; i++) {
+					var cur = document.getElementById(i.toString());
+					cur.innerHTML = json["mostSimilarURLs"][i];
+				}
+				
+				nURLs.innerHTML += "<br/>" + JsonString;
             }
            
         </script>
