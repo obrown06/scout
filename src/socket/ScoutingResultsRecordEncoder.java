@@ -1,7 +1,10 @@
-package scout;
+package socket;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 import com.google.gson.Gson;
+
+import scout.ScoutingResultsRecord;
+
 import javax.websocket.EncodeException;
 
 public class ScoutingResultsRecordEncoder implements Encoder.Text<ScoutingResultsRecord>{

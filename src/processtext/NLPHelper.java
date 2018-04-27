@@ -1,4 +1,4 @@
-package scout;
+package processtext;
 import org.apache.commons.text.similarity.CosineDistance;
 
 public class NLPHelper {

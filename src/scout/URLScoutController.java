@@ -2,6 +2,8 @@ package scout;
 
 import org.jsoup.nodes.Document;
 
+import processtext.NLPHelper;
+
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import scout.URLScout;
+import socket.ScoutServer;
 
 public class URLScoutController implements Runnable {
 	private final int maxNURLsToCrawl = 10000;
@@ -28,7 +31,7 @@ public class URLScoutController implements Runnable {
 	private NLPHelper nlpHelper = new NLPHelper(); 
 	
 	public URLScoutController(ScoutServer server, String baseURL) {
-		this.baseURL = scout.URLCleaner.cleanURL(baseURL);
+		this.baseURL = processtext.URLCleaner.cleanURL(baseURL);
 		this.queuedURLs.add(this.baseURL);
 		this.server = server; 
 	}

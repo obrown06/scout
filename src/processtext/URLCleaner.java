@@ -1,4 +1,4 @@
-package scout;
+package processtext;
 import java.util.ArrayList;
 
 public class URLCleaner {
