@@ -97,13 +97,8 @@ public class ScoutServer {
 	public void sendMessage(URLScoutController controller, ScoutingResultsRecord record) {
 		Session session = this.controllersToSessions.get(controller);
 		
-		if (!controller.isActive) {
-			return;
-		}
-		
 		try {
 			session.getBasicRemote().sendObject(record);
-			
 		} catch (EncodeException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -16,7 +16,7 @@ import socket.ScoutServer;
 
 public class URLScoutController implements Runnable {
 	private final int maxNURLsToCrawl = 10000;
-	private final int NTHREADS = 20;
+	private final int NTHREADS = 4;
 	public boolean isActive = true;
 	
 	private HashSet<String> queuedURLs = new HashSet<String>();
@@ -68,26 +68,31 @@ public class URLScoutController implements Runnable {
 		
 		synchronized(this) {
 			this.record.update(URL, similarityScore);
-			this.server.sendMessage(this, this.record);
 			
 			if (this.record.nURLsVisited() >= this.maxNURLsToCrawl) {
 				this.shutdown();
 			}
 		}
 		
+		this.server.sendMessage(this, this.record);
+		
 	}
 	
-	public synchronized void generateURLScouts(ArrayList<String> URLs) {
+	public void generateURLScouts(ArrayList<String> URLs) {
 		if (!this.isActive) {
 			return; 
 		}
 		
 		for (String URL : URLs) {
-			if (this.queuedURLs.add(URL)) {
+			if (this.addToQueue(URL)) {
 				this.executor.execute(new URLScout(this, URL, this.urlValidator));
 			}
 			
 		}
+	}
+	
+	private synchronized boolean addToQueue(String URL) {
+		return this.queuedURLs.add(URL);
 	}
 	
 	public synchronized void shutdown() {
