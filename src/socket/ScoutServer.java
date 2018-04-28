@@ -32,12 +32,7 @@ public class ScoutServer {
      */
     @OnOpen
     public void onOpen(Session session){
-        System.out.println(session.getId() + " has opened a connection"); 
-        try {
-            session.getBasicRemote().sendText("Connection Established");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        this.sendMessage(session, "Connection Established");
     }
  
     /**
@@ -94,7 +89,7 @@ public class ScoutServer {
     }
 
 	
-	public void sendMessage(URLScoutController controller, ScoutingResultsRecord record) {
+	public void sendScoutingResultsRecordMessage(URLScoutController controller, ScoutingResultsRecord record) {
 		Session session = this.controllersToSessions.get(controller);
 		
 		try {
@@ -105,5 +100,18 @@ public class ScoutServer {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public void sendMessage(URLScoutController controller, String message) {
+		Session session = this.controllersToSessions.get(controller);
+		this.sendMessage(session, message);
+	}
+	
+	public void sendMessage(Session session, String message) {
+		try {
+            session.getBasicRemote().sendText(message);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 	}
 }

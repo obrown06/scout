@@ -77,5 +77,7 @@ public class URLScout implements Runnable{
 			ArrayList<String> cleanedURLs = processtext.URLCleaner.cleanURLs(URLsOnPage);
 			this.controller.generateURLScouts(cleanedURLs);
 		}
+		
+		this.controller.removeURLFromFutures(this.url);
 	}
 }

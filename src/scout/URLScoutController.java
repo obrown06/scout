@@ -15,11 +15,12 @@ import scout.URLScout;
 import socket.ScoutServer;
 
 public class URLScoutController implements Runnable {
-	private final int maxNURLsToCrawl = 10000;
-	private final int NTHREADS = 4;
+	private final int maxNURLsToCrawl = 3000;
+	private final int NTHREADS = 20;
 	public boolean isActive = true;
 	
-	private HashSet<String> queuedURLs = new HashSet<String>();
+	private HashSet<String> visitedURLs = new HashSet<String>();
+	private HashSet<String> URLFutures = new HashSet<String>();
 	private final ExecutorService executor = Executors.newFixedThreadPool(NTHREADS);
 	
 	private String baseURL;
@@ -32,7 +33,8 @@ public class URLScoutController implements Runnable {
 	
 	public URLScoutController(ScoutServer server, String baseURL) {
 		this.baseURL = processtext.URLCleaner.cleanURL(baseURL);
-		this.queuedURLs.add(this.baseURL);
+		this.visitedURLs.add(this.baseURL);
+		this.URLFutures.add(this.baseURL);
 		this.server = server; 
 	}
 	
@@ -42,6 +44,7 @@ public class URLScoutController implements Runnable {
 		if (this.setBaseURLText(scout)) {
 			this.executor.execute(scout);
 		} else {
+			this.server.sendMessage(this, "FAILURE");
 			this.shutdown();
 		}
 	}
@@ -74,7 +77,7 @@ public class URLScoutController implements Runnable {
 			}
 		}
 		
-		this.server.sendMessage(this, this.record);
+		this.server.sendScoutingResultsRecordMessage(this, this.record);
 		
 	}
 	
@@ -84,15 +87,24 @@ public class URLScoutController implements Runnable {
 		}
 		
 		for (String URL : URLs) {
-			if (this.addToQueue(URL)) {
+			if (this.addURLToVisited(URL)) {
+				this.URLFutures.add(URL);
 				this.executor.execute(new URLScout(this, URL, this.urlValidator));
 			}
 			
 		}
 	}
 	
-	private synchronized boolean addToQueue(String URL) {
-		return this.queuedURLs.add(URL);
+	private synchronized boolean addURLToVisited(String URL) {
+		return this.visitedURLs.add(URL);
+	}
+	
+	public void removeURLFromFutures(String URL) {
+		this.URLFutures.remove(URL);
+		
+		if (URLFutures.size() == 0) {
+			this.shutdown(); 
+		}
 	}
 	
 	public synchronized void shutdown() {
