@@ -5,8 +5,8 @@ import java.util.Collections;
 
 
 public class ScoutingResultsRecord {
-	private ArrayList<String> mostSimilarURLs = new ArrayList<String>();
-	private ArrayList<Double> mostSimilarURLsScores = new ArrayList<Double>();
+	private ArrayList<String> urls = new ArrayList<String>();
+	private ArrayList<Double> scores = new ArrayList<Double>();
 	private final int MAX_SIZE = 10; 
 	private int nURLsVisited = 0; 
 	
@@ -20,22 +20,19 @@ public class ScoutingResultsRecord {
 	}
 	
 	private void insert(String URL, double similarityScore) {
-		System.out.println("TRYING TO INSERT: " + URL + " WITH SIMILARITY SCORE: " + Double.toString(similarityScore));
-		System.out.println("mostSimilarURLs Size: " + mostSimilarURLs.size());
 		int insertionIndex = this.computeInsertionIndex(similarityScore);
-		System.out.println("Insertion index: " + insertionIndex);
-		this.mostSimilarURLs.add(insertionIndex, URL);
-		this.mostSimilarURLsScores.add(insertionIndex, similarityScore);
+		this.urls.add(insertionIndex, URL);
+		this.scores.add(insertionIndex, similarityScore);
 		
 		
-		if (this.mostSimilarURLs.size() > this.MAX_SIZE) {
-			this.mostSimilarURLs.remove(this.mostSimilarURLs.size() - 1);
-			this.mostSimilarURLsScores.remove(this.mostSimilarURLsScores.size() - 1);
+		if (this.urls.size() > this.MAX_SIZE) {
+			this.urls.remove(this.urls.size() - 1);
+			this.scores.remove(this.scores.size() - 1);
 		}
 	}
 	
 	private int computeInsertionIndex(double scoreToInsert) {
-		int index = Collections.binarySearch(this.mostSimilarURLsScores, scoreToInsert);
+		int index = Collections.binarySearch(this.scores, scoreToInsert);
 		
 		if (index < 0) {
 			index = Math.abs(index + 1);
